@@ -1,146 +1,167 @@
-📚 Book Review API – Node.js + Express + MongoDB
+# 📚 Book Review API
 
-Deployment link-https://billeasyassessment.onrender.com
+A RESTful API built with **Node.js**, **Express**, and **MongoDB** that allows users to register/login, add books, submit reviews, and search books — with JWT authentication and robust validation.
 
-A RESTful backend API for managing Books and Reviews with secure user authentication using JWT, built in Node.js, following professional structure for real-world projects.
-🚀 Tech Stack
+Deployment link-https://billeasyassessment.onrender.com/
 
-    Node.js + Express
+## 🛠️ Project Setup Instructions
 
-    MongoDB with Mongoose
+### 1. Clone the repository
 
-    JWT Authentication
+```bash
+git clone https://github.com/ash44444/billeasyassessment.git
+cd billeasyassessment
 
-    bcryptjs for password hashing
-
-    dotenv, helmet, cors for environment and security
-
-✅ Features
-
-    🔐 JWT-based Signup/Login
-
-    📚 CRUD: Add/Get Books
-
-    🌟 Submit/Update/Delete Reviews
-
-    📊 Average rating calculation per book
-
-    🔍 Search by Title/Author (partial & case-insensitive)
-
-    📄 Pagination support for books & reviews
-
-📁 Folder Structure
-
-book-review-api/
-├── config/
-│ └── db.js
-├── controllers/
-│ ├── authController.js
-│ ├── bookController.js
-│ └── reviewController.js
-├── middleware/
-│ └── authMiddleware.js
-├── models/
-│ ├── Book.js
-│ ├── Review.js
-│ └── User.js
-├── routes/
-│ ├── authRoutes.js
-│ ├── bookRoutes.js
-│ └── reviewRoutes.js
-├── utils/
-│ └── generateToken.js
-├── .env
-├── server.js
-├── package.json
-└── README.md
-
-🧪 How to Run Locally
-✅ 1. Clone the Repository
-
-git clone https://github.com/your-username/book-review-api.git
-cd book-review-api
-
-✅ 2. Install Dependencies
+2. Install dependencies
 
 npm install
 
-✅ 3. Configure .env
+3. Configure environment variables
 
-Create a .env file in root:
+Create a .env file in the root folder with:
 
 PORT=5000
 MONGO_URI=mongodb://127.0.0.1:27017/book-review-db
-JWT_SECRET=yourSuperSecretJWT
+JWT_SECRET=yourStrongJWTSecretHere
 
-✅ 4. Start Server
+4. Run the development server
 
 npm run dev
 
-Server runs at:
-http://localhost:5000
-📌 API Endpoints Summary
-🔐 Auth
-Method Endpoint Description
-POST /api/auth/signup Register a user
-POST /api/auth/login Login and get JWT
-📘 Book
-Method Endpoint Description
-GET /api/books Get all books (pagination, filters)
-GET /api/books/search?query= Search by title/author
-GET /api/books/:id Get book + average rating + reviews
-POST /api/books Add new book (auth required)
-✍️ Review
-Method Endpoint Description
-POST /api/books/:id/reviews Add review (1/user/book)
-PUT /api/reviews/:id Update own review
-DELETE /api/reviews/:id Delete own review
-📊 Example API Requests (Postman / Curl)
-✅ Register
+The server will start at: http://localhost:5000
+🚀 How to Run Locally
+
+    Make sure MongoDB is running locally or use a cloud MongoDB URI.
+
+    Use tools like Postman or curl for API testing.
+
+    Securely keep your .env file and never commit secrets to GitHub.
+
+📌 API Endpoints Overview
+Authentication
+Method	Endpoint	Description
+POST	/api/auth/signup	Register a new user
+POST	/api/auth/login	Login and receive JWT
+Books
+Method	Endpoint	Description
+POST	/api/books	Add new book (auth required)
+GET	/api/books	Get all books with pagination & optional filters
+GET	/api/books/:id	Get book by ID with average rating & reviews
+GET	/api/books/search?query=	Search books by title or author (case-insensitive, partial matches)
+Reviews
+Method	Endpoint	Description
+POST	/api/books/:id/reviews	Submit a review (auth required)
+PUT	/api/reviews/:id	Update your own review
+DELETE	/api/reviews/:id	Delete your own review
+📊 Example API Requests
+Signup new user
 
 curl -X POST http://localhost:5000/api/auth/signup \
 -H "Content-Type: application/json" \
--d '{"username":"ashish", "email":"ashish@example.com", "password":"123456"}'
+-d '{"username":"ashish","email":"ashish@example.com","password":"123456"}'
 
-✅ Login
+Login and get JWT token
 
 curl -X POST http://localhost:5000/api/auth/login \
 -H "Content-Type: application/json" \
--d '{"email":"ashish@example.com", "password":"123456"}'
+-d '{"email":"ashish@example.com","password":"123456"}'
 
-✅ Add Book
+Add a new book (replace YOUR_JWT_TOKEN with actual token)
 
 curl -X POST http://localhost:5000/api/books \
--H "Content-Type: application/json" \
 -H "Authorization: Bearer YOUR_JWT_TOKEN" \
--d '{"title":"Harry Potter", "author":"J.K. Rowling", "genre":"Fantasy", "description":"Magic book"}'
+-H "Content-Type: application/json" \
+-d '{"title":"The Hobbit","author":"J.R.R. Tolkien","genre":"Fantasy","description":"Classic fantasy novel"}'
 
-✅ Search Books
+Get paginated books (page=1, limit=10)
 
-curl http://localhost:5000/api/books/search?query=potter
+curl "http://localhost:5000/api/books?page=1&limit=10"
 
-🧠 Design Decisions & Notes
+Search books by title or author
 
-    Used Mongoose for schema enforcement and relationships.
+curl "http://localhost:5000/api/books/search?query=tolkien"
 
-    One review per user per book enforced by logic.
+Get book details with average rating and paginated reviews
 
-    All protected routes use middleware authMiddleware.js.
+curl "http://localhost:5000/api/books/BOOK_ID?page=1&limit=5"
 
-    Project uses modular folder-based architecture.
+Submit a review for a book
 
-    Clean, consistent HTTP status codes.
+curl -X POST http://localhost:5000/api/books/BOOK_ID/reviews \
+-H "Authorization: Bearer YOUR_JWT_TOKEN" \
+-H "Content-Type: application/json" \
+-d '{"rating":5,"comment":"Loved it!"}'
 
-📦 Future Improvements
+Update your review
 
-    Add Swagger API Docs
+curl -X PUT http://localhost:5000/api/reviews/REVIEW_ID \
+-H "Authorization: Bearer YOUR_JWT_TOKEN" \
+-H "Content-Type: application/json" \
+-d '{"rating":4,"comment":"Updated comment"}'
 
-    Admin Role for managing books/reviews
+Delete your review
 
-    User Profile Management
+curl -X DELETE http://localhost:5000/api/reviews/REVIEW_ID \
+-H "Authorization: Bearer YOUR_JWT_TOKEN"
 
-    Rate Limiting
+🧠 Design Decisions & Assumptions
 
-🧑‍💻 Author
+    Authentication: JWT used for stateless, secure user sessions.
 
-Ashish Maner – LinkedIn
+    Password Security: Passwords hashed with bcrypt before storing.
+
+    One Review Per User Per Book: Enforced using a unique compound index on (userId, bookId).
+
+    Pagination: Supported for books and reviews to handle large datasets efficiently.
+
+    Search: Case-insensitive partial matching on book title and author using MongoDB regex queries.
+
+    Average Rating: Computed dynamically using aggregation when fetching book details.
+
+    Data Validation: Basic validation done in controllers for required fields and data types.
+
+    Modular Architecture: Code separated into controllers, models, routes, and middleware for maintainability and scalability.
+
+    Security: Helmet and CORS enabled (if included in your project), and environment variables used for secrets.
+
+    Assumption: User roles are not implemented (all authenticated users have equal permissions for this basic project).
+
+    Error Handling: Basic error handling middleware included for clarity and clean responses.
+
+🗂️ Database Schema Summary
+User
+Field	Type	Notes
+username	String	Unique, required
+email	String	Unique, required
+password	String	Hashed, required
+Book
+Field	Type	Notes
+title	String	Required
+author	String	Required
+genre	String	Required
+description	String	Optional
+createdBy	ObjectId	Reference to User
+Review
+Field	Type	Notes
+userId	ObjectId	Reference to User
+bookId	ObjectId	Reference to Book
+rating	Number	1–5 scale
+comment	String	Optional
+
+Unique compound index on (userId, bookId) prevents duplicate reviews.
+🧪 Advanced Postman Testing Tips
+
+    Environment Variables: Define {{baseUrl}} (e.g., http://localhost:5000) and {{jwtToken}} in Postman environment.
+
+    Use Pre-request scripts to automatically refresh tokens if implementing refresh flow.
+
+    Use Tests tab in Postman to assert status codes, response structure, and extract tokens for chaining requests.
+
+    Use Collection Runner to run bulk tests with data files (CSV/JSON) for load and bulk testing.
+
+    Save requests with descriptions and example responses for team collaboration.
+
+👤 Author
+
+Ashish Maner
+GitHub Repository
